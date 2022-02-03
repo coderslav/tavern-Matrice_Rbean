@@ -9,15 +9,21 @@ function App() {
         { name: 'Duff Premium', stock: 20, price: 7, img: 'duff_premium.png' },
     ]);
     const [clients, setClients] = useState([]);
+    const [profit, setProfit] = useState(0);
 
     const handleNewClientEntry = (event) => {
         event.preventDefault();
         const formData = Object.fromEntries(new FormData(event.currentTarget).entries());
-        setClients([...clients, { name: formData.name, age: formData.age, pregnant: formData.pregnant ? 'is pregnant' : 'is not pregnant' }]);
+        setClients([...clients, { id: clients.length > 0 ? Math.max(...clients.map((client) => client.id)) + 1 : 1, name: formData.name, age: formData.age, pregnant: formData.pregnant ? 'is pregnant' : 'is not pregnant', bill: 0 }]);
         event.currentTarget.reset();
     };
+    const handleProfit = (event) => {
+        let clientId = parseInt(event.currentTarget.value);
+        setProfit(profit + clients[clients.findIndex((client) => client.id === clientId)].bill);
+        setClients(clients.filter((client) => client.id !== clientId));
+    };
 
-    return <Main beers={{ data: beers, setData: setBeers }} clients={{ data: clients, setData: setClients }} handleNewClientEntry={handleNewClientEntry} />;
+    return <Main profit={profit} beers={{ data: beers, setData: setBeers }} clients={{ data: clients, setData: setClients }} handleNewClientEntry={handleNewClientEntry} handleProfit={handleProfit} />;
 }
 
 export default App;
